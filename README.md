@@ -1,18 +1,36 @@
 # Agentic Design Patterns
 
-LangChain/LangGraph 기반 에이전트 디자인 패턴 학습 자료
+LangChain/LangGraph 기반 에이전트 디자인 패턴 학습 자료.
+모든 예제는 API 키 없이 실행되는 **Fake 모델**을 사용하며, 패턴마다 동일한 표기법의 워크플로우 다이어그램이 포함되어 있습니다.
+
+## 목차
+
+| # | 패턴 | 한 줄 요약 | 핵심 구성 요소 | 파일 |
+|:-:|------|-----------|---------------|------|
+| 01 | [Prompt Chaining](#01-prompt-chaining) | 이전 LLM 호출의 출력을 다음 호출의 입력으로 순차 연결 | LCEL `\|`, `StrOutputParser`, `JsonOutputParser` | [`01-prompt-chaining.py`](01-prompt-chaining.py) |
+| 02 | [Routing](#02-routing) | LLM이 의도를 분류하고 전문 핸들러로 분기 | `RunnableBranch`, `RunnablePassthrough` | [`02-routing.py`](02-routing.py) |
+| 03 | [Parallelization](#03-parallelization) | 독립적인 체인을 동시에 실행하고 결과를 종합 | `RunnableParallel`, `ainvoke` | [`03-parallelization.py`](03-parallelization.py) |
+| 04 | [Reflection](#04-reflection) | 생성 → 검토 → 피드백 반영을 반복해 품질 개선 | 생성자/검토자 분리, 종료 신호 `CODE_IS_PERFECT` | [`04-reflection.py`](04-reflection.py) |
+| 05 | [Function Calling](#05-function-calling) | LLM이 도구 호출을 결정하고 결과를 받아 답변 | `@tool`, `create_agent`, `tool_calls` / `ToolMessage` | [`05-function-calling.py`](05-function-calling.py) |
+| 06 | [Planning](#06-planning) | 계획 수립 → 단계별 실행 루프 → 종합 (Plan-and-Execute) | LangGraph `StateGraph`, `add_conditional_edges` | [`06-planning.py`](06-planning.py) |
+| 07 | [Multi-Agent Collaboration](#07-multi-agent-collaboration) | 역할별 에이전트가 공유 상태로 핸드오프하며 협업 | LangGraph 노드 = 에이전트, 역할 프롬프트, 상태 키 = 전달물 | [`07-multi-agent-collaboration.py`](07-multi-agent-collaboration.py) |
+
+---
+
+<details>
+<summary><b>다이어그램 표기법</b> (펼치기)</summary>
 
 > 워크플로우 다이어그램은 `images/` 폴더의 SVG 파일이며, 모든 패턴이 동일한 표기법을 사용합니다.
-
-**다이어그램 표기법**
 
 | 기호 | 의미 |
 |------|------|
 | `start` (흰색) / `end` (보라색) | 흐름의 시작 / 종료 |
 | `M1`, `M2`, … (연보라 사각형) | 메인 흐름의 단계 (**M**ain step) |
-| `T1`, `T2`, … / `B1`, `I1`, `U1` | 서브그래프 내부의 세부 단계 (**T**ask / 분기별 핸들러) |
+| `T1`, `T2`, … / `B1`, `I1`, `U1`, `R1`, `W1`, `E1` | 서브그래프 내부의 세부 단계 (**T**ask / 분기별 핸들러 / 에이전트별 작업) |
 | 빨간 테두리 박스 (서브그래프) | 하나의 패턴 로직으로 묶이는 구간 (체인, 병렬 처리, 라우팅 분기, 반복 루프) |
-| 선 위의 회색 글씨 | 분기 조건 (예: `booker` / `info` / `unclear`, `CODE_IS_PERFECT`) |
+| 선 위의 회색 글씨 | 분기 조건 (예: `booker` / `info` / `unclear`, `CODE_IS_PERFECT`, `tool_calls 있음`) |
+
+</details>
 
 ---
 
