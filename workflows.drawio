@@ -1,0 +1,246 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="draw.io" version="21.0.0" type="device">
+  <diagram id="prompt-chaining" name="01-Prompt Chaining">
+    <mxGraphModel dx="1024" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pc-start" value="start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="364" y="40" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-input" value="INPUT&#xa;텍스트 입력" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="334" y="120" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-chain1" value="Chain 1: extraction_chain&#xa;(사양 추출)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="314" y="210" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-result1" value="중간 결과&#xa;CPU, RAM, Storage 추출" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="314" y="310" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-chain2" value="Chain 2: transform_chain&#xa;(JSON 변환)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="314" y="400" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-output" value="OUTPUT&#xa;{cpu, memory, storage}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="334" y="500" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-end" value="end" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="364" y="590" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pc-start" target="pc-input">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pc-input" target="pc-chain1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pc-chain1" target="pc-result1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pc-result1" target="pc-chain2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pc-chain2" target="pc-output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pc-e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pc-output" target="pc-end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="routing" name="02-Routing">
+    <mxGraphModel dx="1024" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="rt-start" value="start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="364" y="40" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-input" value="사용자 요청 입력" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="334" y="120" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-router" value="coordinator_router_chain&#xa;(LLM이 요청 유형 분류)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="304" y="210" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-decision" value="decision?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="354" y="310" width="100" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-booker" value="booking_handler&#xa;(예약 처리)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="120" y="430" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-info" value="info_handler&#xa;(정보 조회)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="334" y="430" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-unclear" value="unclear_handler&#xa;(명확화 요청)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="550" y="430" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-output" value="처리 결과 출력" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="334" y="530" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-end" value="end" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="364" y="620" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-start" target="rt-input">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-input" target="rt-router">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-router" target="rt-decision">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e4" value="booker" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-decision" target="rt-booker">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e5" value="info" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-decision" target="rt-info">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e6" value="unclear" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-decision" target="rt-unclear">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-booker" target="rt-output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-info" target="rt-output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-unclear" target="rt-output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rt-e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rt-output" target="rt-end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="parallelization" name="03-Parallelization">
+    <mxGraphModel dx="1024" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pl-start" value="start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="364" y="40" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-input" value="INPUT&#xa;주제 입력" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="334" y="120" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-parallel-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="600" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-parallel-label" value="RunnableParallel (동시 실행)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="205" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-summary" value="summarize_chain&#xa;(요약)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="130" y="250" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-questions" value="questions_chain&#xa;(질문 생성)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="330" y="250" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-terms" value="terms_chain&#xa;(핵심용어)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="530" y="250" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-collect" value="결과 수집&#xa;{summary, questions, key_terms}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="284" y="390" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-synthesis" value="synthesis_prompt → LLM&#xa;(종합 답변 생성)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="304" y="480" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-output" value="OUTPUT&#xa;최종 종합 답변" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="334" y="580" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-end" value="end" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="364" y="670" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-start" target="pl-input">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e2a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-input" target="pl-summary">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e2b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-input" target="pl-questions">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e2c" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-input" target="pl-terms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e3a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-summary" target="pl-collect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e3b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-questions" target="pl-collect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e3c" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-terms" target="pl-collect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-collect" target="pl-synthesis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-synthesis" target="pl-output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl-e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pl-output" target="pl-end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="reflection" name="04-Reflection">
+    <mxGraphModel dx="1024" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="rf-start" value="start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="364" y="40" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-input" value="작업 요구사항 입력" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="324" y="120" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-loop-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="200" width="500" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-loop-label" value="리플렉션 루프 (최대 N회 반복)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="280" y="205" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-generate" value="단계 1: 코드 생성&#xa;(LLM이 코드 작성)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="314" y="250" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-review" value="단계 2: 코드 검토&#xa;(LLM이 피드백 제공)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="314" y="350" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-decision" value="완벽한가?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="354" y="450" width="100" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-output" value="OUTPUT&#xa;최종 코드" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="334" y="590" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-end" value="end" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="364" y="680" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rf-start" target="rf-input">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rf-input" target="rf-generate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rf-generate" target="rf-review">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rf-review" target="rf-decision">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-e5" value="NO&#xa;(피드백 반영)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rf-decision" target="rf-generate">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="490" />
+              <mxPoint x="550" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rf-e6" value="YES" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rf-decision" target="rf-output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rf-e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rf-output" target="rf-end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

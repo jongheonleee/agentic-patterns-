@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 790" width="560" height="790" style="background:#FFFFFF">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+    </marker>
+  </defs>
+  <rect width="560" height="790" fill="#FFFFFF"/>
+  <rect x="258" y="9" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="280" y="20" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="280,31 280,55" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="190.0" y="55.0" width="180" height="30" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="280" y="70.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M1. 사용자 질문 입력</text>
+  <polyline points="280,85 280,115" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="165.0" y="115.0" width="230" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="280" y="128.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M2. LLM 호출</text>
+  <text x="280" y="142.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(도구 목록 바인딩 → tool_calls 여부 판단)</text>
+  <polyline points="280,155 280,190" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="175,190 480,190" fill="none" stroke="#333333" stroke-width="1"/>
+  <text x="175" y="183" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">tool_calls 있음</text>
+  <text x="480" y="183" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">tool_calls 없음</text>
+  <rect x="20" y="225" width="380" height="410" fill="#FBF4FB" stroke="#E53935" stroke-width="1"/>
+  <polyline points="175,190 175,269" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="153" y="269" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="175" y="280" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="175,291 175,310" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="65.0" y="310.0" width="220" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="175" y="323.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T1. 도구 호출 파싱</text>
+  <text x="175" y="337.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(도구 이름 · 인자 추출)</text>
+  <polyline points="175,350 175,380" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="65.0" y="380.0" width="220" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="175" y="393.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T2. 도구 실행</text>
+  <text x="175" y="407.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(search_information)</text>
+  <polyline points="175,420 175,450" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="65.0" y="450.0" width="220" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="175" y="463.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T3. 결과 전달</text>
+  <text x="175" y="477.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(ToolMessage로 대화에 추가)</text>
+  <polyline points="175,490 175,520" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="65.0" y="520.0" width="220" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="175" y="533.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T4. LLM 재호출</text>
+  <text x="175" y="547.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(도구 결과 기반 답변 생성)</text>
+  <polyline points="175,560 175,589" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="153" y="589" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="175" y="600" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <polyline points="285,540 365,540 365,330 286,330" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="358" y="428" text-anchor="end" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">도구 추가 요청</text>
+  <text x="358" y="442" text-anchor="end" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">(반복)</text>
+  <polyline points="480,190 480,670" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="175,611 175,670" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="175,670 480,670" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="280,670 280,690" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="190.0" y="690.0" width="180" height="30" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="280" y="705.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M3. 최종 답변 출력</text>
+  <polyline points="280,720 280,749" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="258" y="749" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="280" y="760" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <text x="210.0" y="241" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">도구 호출 처리 (Function Calling)</text>
+  <text x="210.0" y="254" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="10" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(LLM이 요청한 도구를 실행하고 결과를 다시 LLM에 전달)</text>
+</svg>

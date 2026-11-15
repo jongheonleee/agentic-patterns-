@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 630" width="620" height="630" style="background:#FFFFFF">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+    </marker>
+  </defs>
+  <rect width="620" height="630" fill="#FFFFFF"/>
+  <rect x="288" y="9" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="310" y="20" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="310,31 310,55" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="230.0" y="55.0" width="160" height="30" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="310" y="70.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M1. 주제 입력</text>
+  <rect x="30" y="125" width="560" height="315" fill="#FBF4FB" stroke="#E53935" stroke-width="1"/>
+  <polyline points="310,85 310,169" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="288" y="169" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="310" y="180" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="310,191 310,215" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="130,215 490,215" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="130,215 130,235" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <polyline points="310,215 310,235" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <polyline points="490,215 490,235" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="50.0" y="235.0" width="160" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="130" y="248.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T1. 요약 생성</text>
+  <text x="130" y="262.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(summarize_chain)</text>
+  <rect x="230.0" y="235.0" width="160" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="310" y="248.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T2. 질문 생성</text>
+  <text x="310" y="262.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(questions_chain)</text>
+  <rect x="410.0" y="235.0" width="160" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="490" y="248.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T3. 핵심 용어 추출</text>
+  <text x="490" y="262.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(terms_chain)</text>
+  <polyline points="130,275 130,300" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="310,275 310,300" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="490,275 490,300" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="130,300 490,300" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="310,300 310,325" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="180.0" y="325.0" width="260" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="310" y="338.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T4. 결과 취합</text>
+  <text x="310" y="352.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">{summary, questions, key_terms, topic}</text>
+  <polyline points="310,365 310,394" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="288" y="394" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="310" y="405" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <polyline points="310,416 310,465" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="210.0" y="465.0" width="200" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="310" y="478.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M2. 종합 답변 생성</text>
+  <text x="310" y="492.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(synthesis_prompt | llm)</text>
+  <polyline points="310,505 310,535" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="230.0" y="535.0" width="160" height="30" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="310" y="550.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M3. 최종 답변 출력</text>
+  <polyline points="310,565 310,594" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="288" y="594" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="310" y="605" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <text x="310.0" y="141" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">병렬 처리 (RunnableParallel)</text>
+  <text x="310.0" y="154" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="10" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(3개의 체인을 동시에 실행하고 결과를 하나로 취합)</text>
+</svg>
