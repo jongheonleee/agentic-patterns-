@@ -26,3 +26,6 @@ __pycache__/
 # Local-only
 .history/
 .claude/settings.local.json
+
+# 11번 예제가 생성하는 코드
+output/

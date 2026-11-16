@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 705" width="640" height="705" style="background:#FFFFFF">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+    </marker>
+  </defs>
+  <rect width="640" height="705" fill="#FFFFFF"/>
+  <rect x="248" y="9" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="270" y="20" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="270,31 270,55" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="130.0" y="55.0" width="280" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="68.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M1. 초기 프로그램 + 평가기 준비</text>
+  <text x="270" y="82.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(세대 0: 초기 프로그램을 평가해 best로 설정)</text>
+  <rect x="40" y="130" width="560" height="435" fill="#FBF4FB" stroke="#E53935" stroke-width="1"/>
+  <polyline points="270,95 270,174" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="248" y="174" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="270" y="185" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="270,196 270,215" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="110.0" y="215.0" width="320" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="228.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T1. 변이 (Mutate)</text>
+  <text x="270" y="242.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(LLM: 부모 코드 + 지표 + 실패 피드백 → 자식 코드)</text>
+  <polyline points="270,255 270,275" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="110.0" y="275.0" width="320" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="288.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T2. 평가 (Evaluate)</text>
+  <text x="270" y="302.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(코드 실행: 테스트 통과율 · 호출 수 → combined 점수)</text>
+  <polyline points="270,315 270,335" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="110.0" y="335.0" width="320" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="348.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T3. 선택 (Select)</text>
+  <text x="270" y="362.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(자식 combined &gt; best combined ?)</text>
+  <polyline points="270,375 270,395" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="170,395 370,395" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="170,395 170,420" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <polyline points="370,395 370,420" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="178" y="412" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">높음</text>
+  <text x="378" y="412" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">낮거나 같음</text>
+  <rect x="80.0" y="420.0" width="180" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="170" y="433.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T4a. 채택</text>
+  <text x="170" y="447.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(best ← 자식 프로그램)</text>
+  <rect x="280.0" y="420.0" width="180" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="370" y="433.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">T4b. 기각</text>
+  <text x="370" y="447.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(실패 피드백만 다음 변이에 전달)</text>
+  <polyline points="170,460 170,480" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="370,460 370,480" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="170,480 370,480" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="270,480 270,500" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="270,500 505,500 505,235 431,235" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="512" y="364" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">세대 남음</text>
+  <text x="512" y="378" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">(다음 세대)</text>
+  <polyline points="270,500 270,524" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="278" y="516" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">최대 세대 도달</text>
+  <rect x="248" y="524" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="535" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <polyline points="270,546 270,600" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="130.0" y="600.0" width="280" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="613.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M2. 최고 프로그램 + 지표 출력</text>
+  <text x="270" y="627.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(best_program.code / metrics)</text>
+  <polyline points="270,640 270,669" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="248" y="669" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="680" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <text x="270.0" y="146" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">진화 루프 (Evolution Loop)</text>
+  <text x="270.0" y="159" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="10" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(최대 4세대 반복: 변이 → 평가 → 선택)</text>
+</svg>

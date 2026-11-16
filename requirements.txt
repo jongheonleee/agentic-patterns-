@@ -5,6 +5,10 @@ langchain-openai>=0.2.0
 langchain-anthropic>=0.2.0
 langgraph>=0.2.0
 
+# MCP (10번 예제) — langchain-mcp-adapters 0.3.x 가 mcp<2 를 요구하므로 fastmcp 는 3.x 로 고정
+fastmcp>=3.4,<4
+langchain-mcp-adapters>=0.3.2
+
 # Utilities
 python-dotenv>=1.0.0
 pydantic>=2.0.0

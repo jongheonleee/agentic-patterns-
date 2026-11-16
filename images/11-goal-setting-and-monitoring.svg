@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 615" width="640" height="615" style="background:#FFFFFF">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+    </marker>
+  </defs>
+  <rect width="640" height="615" fill="#FFFFFF"/>
+  <rect x="248" y="9" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="270" y="20" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="270,31 270,55" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="110.0" y="55.0" width="320" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="68.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M1. 목표 설정 (Goal Setting)</text>
+  <text x="270" y="82.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(요구사항 + 측정 가능한 목표 목록 + 예산: 최대 반복 횟수)</text>
+  <rect x="40" y="130" width="560" height="340" fill="#FBF4FB" stroke="#E53935" stroke-width="1"/>
+  <polyline points="270,95 270,174" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="248" y="174" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="270" y="185" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="270,196 270,215" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="215.0" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="228.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">G1. 코드 생성 (Generate)</text>
+  <text x="270" y="242.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(LLM: 요구사항 + 목표 + 이전 코드 + 피드백 → 코드)</text>
+  <polyline points="270,255 270,275" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="275.0" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="288.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">G2. 목표 점검 · 모니터링 (Monitor)</text>
+  <text x="270" y="302.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(LLM: 목표별 달성/미달성 + 사유 → 진척도 n/N, 후퇴 감지)</text>
+  <polyline points="270,315 270,335" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="335.0" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="348.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">G3. 판정 (Decide)</text>
+  <text x="270" y="362.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(모두 달성? / 남은 반복 있음?)</text>
+  <polyline points="270,375 270,395" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="270,395 505,395 505,235 441,235" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="512" y="309" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">미달성 &amp; 반복 남음</text>
+  <text x="512" y="323" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">(사유 → 피드백)</text>
+  <polyline points="270,395 270,426" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="278" y="409" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">모두 달성</text>
+  <text x="278" y="422" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">/ 최대 반복 도달</text>
+  <rect x="248" y="426" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="437" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <polyline points="270,448 270,505" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="110.0" y="505.0" width="320" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="518.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M2. 최종 코드 저장 + 실행 확인</text>
+  <text x="270" y="532.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(목표 달성 현황 주석 + 코드 → output/binary_gap.py)</text>
+  <polyline points="270,545 270,574" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="248" y="574" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="270" y="585" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <text x="270.0" y="146" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">목표 달성 루프 (Goal Loop)</text>
+  <text x="270.0" y="159" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="10" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(최대 5회 반복: 생성 → 점검 → 판정)</text>
+</svg>

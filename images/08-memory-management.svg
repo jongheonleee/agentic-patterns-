@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 610 1250" width="610" height="1250" style="background:#FFFFFF">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+    </marker>
+  </defs>
+  <rect width="610" height="1250" fill="#FFFFFF"/>
+  <rect x="228" y="9" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="250" y="20" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="250,31 250,55" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="140.0" y="55.0" width="220" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="68.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M1. 사용자 메시지 입력</text>
+  <text x="250" y="82.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(thread_id, user_id 지정)</text>
+  <rect x="40" y="130" width="420" height="300" fill="#FBF4FB" stroke="#E53935" stroke-width="1"/>
+  <polyline points="250,95 250,174" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="228" y="174" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="250" y="185" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="250,196 250,215" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="215.0" width="300" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="228.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">L1. 단기 기억 복원</text>
+  <text x="250" y="242.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(체크포인터: thread_id의 대화 이력 → messages)</text>
+  <polyline points="250,255 250,275" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="275.0" width="300" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="288.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">L2. 장기 기억 의미 검색</text>
+  <text x="250" y="302.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(스토어: (user_id, 'memories') 네임스페이스)</text>
+  <polyline points="250,315 250,335" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="335.0" width="300" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="348.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">L3. 절차적 기억 조회</text>
+  <text x="250" y="362.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(스토어: ('agent_instructions',) 지침)</text>
+  <polyline points="250,375 250,394" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="228" y="394" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="405" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <polyline points="250,416 250,460" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="120.0" y="460.0" width="260" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="473.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M2. 모델 호출</text>
+  <text x="250" y="487.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(지침 + 장기 기억 + 대화 이력 → 응답 생성)</text>
+  <rect x="40" y="535" width="420" height="240" fill="#FBF4FB" stroke="#E53935" stroke-width="1"/>
+  <polyline points="250,500 250,579" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="228" y="579" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="250" y="590" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="250,601 250,620" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="620.0" width="300" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="633.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">S1. 새로 기억할 사실 추출</text>
+  <text x="250" y="647.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(memory_llm: 이름·선호·일정 등, 없으면 NONE)</text>
+  <polyline points="250,660 250,680" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="258" y="674" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">저장할 사실 있음</text>
+  <rect x="100.0" y="680.0" width="300" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="693.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">S2. 장기 기억 저장</text>
+  <text x="250" y="707.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(store.put → (user_id, 'memories'))</text>
+  <polyline points="250,720 250,739" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="228" y="739" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="750" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <polyline points="400,640 420,640 420,750 273,750" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="426" y="692" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">NONE</text>
+  <text x="426" y="706" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">(저장 생략)</text>
+  <polyline points="250,761 250,805" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="120.0" y="805.0" width="260" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="818.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M3. 응답 출력 + 상태 저장</text>
+  <text x="250" y="832.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(체크포인터가 노드마다 상태를 thread_id로 자동 저장)</text>
+  <polyline points="380,825 500,825 500,75 361,75" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="507" y="447" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">다음 턴</text>
+  <text x="507" y="461" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">(같은 thread_id)</text>
+  <rect x="40" y="880" width="420" height="240" fill="#FBF4FB" stroke="#E53935" stroke-width="1"/>
+  <polyline points="250,845 250,924" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="258" y="861" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">세션 종료</text>
+  <rect x="228" y="924" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="250" y="935" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="250,946 250,965" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="965.0" width="300" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="978.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">P1. 대화 회고</text>
+  <text x="250" y="992.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(현재 지침 + 세션 대화 기록 → 배울 점 도출)</text>
+  <polyline points="250,1005 250,1025" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="1025.0" width="300" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="1038.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">P2. 에이전트 지침 갱신</text>
+  <text x="250" y="1052.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(store.put → ('agent_instructions',) 덮어쓰기)</text>
+  <polyline points="250,1065 250,1084" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="228" y="1084" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="1095" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <polyline points="250,1106 250,1150" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="120.0" y="1150.0" width="260" height="30" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="1165.0" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M4. 다음 세션부터 갱신된 지침 적용</text>
+  <polyline points="250,1180 250,1209" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="228" y="1209" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="250" y="1220" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <text x="250.0" y="146" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">기억 로드 (Load Memories)</text>
+  <text x="250.0" y="159" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="10" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(단기 · 장기 · 절차적 기억을 한 번에 불러온다)</text>
+  <text x="250.0" y="551" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">기억 저장 (Save Memories)</text>
+  <text x="250.0" y="564" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="10" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(이번 턴에서 새로 알게 된 사실만 장기 기억으로)</text>
+  <text x="250.0" y="896" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">절차적 기억 갱신 (Reflection)</text>
+  <text x="250.0" y="909" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="10" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(세션 종료 후 그래프 밖에서 1회 실행)</text>
+</svg>
