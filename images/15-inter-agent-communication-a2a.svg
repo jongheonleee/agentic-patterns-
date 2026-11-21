@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 785" width="660" height="785" style="background:#FFFFFF">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+    </marker>
+  </defs>
+  <rect width="660" height="785" fill="#FFFFFF"/>
+  <rect x="308" y="9" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="330" y="20" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="330,31 330,55" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="120" y="55" width="420" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="330" y="68" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M1. 탐색 (Discovery)</text>
+  <text x="330" y="82" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(GET /.well-known/agent-card.json → 에이전트 카드 · 스킬 목록)</text>
+  <polyline points="330,95 330,115" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="160" y="115" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="330" y="128" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M2. 사용자 요청 입력</text>
+  <text x="330" y="142" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(예: 내일 오전 10시부터 11시까지 비어 있어?)</text>
+  <rect x="30" y="190" width="610" height="460" fill="#FBF4FB" stroke="#E53935" stroke-width="1"/>
+  <polyline points="330,155 330,234" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="308" y="234" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="330" y="245" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="330,256 330,275" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="160" y="275" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="330" y="288" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">A1. 스킬 매칭 (클라이언트)</text>
+  <text x="330" y="302" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(요청 문장 ↔ 카드의 skills tags 비교)</text>
+  <polyline points="500,295 610,295 610,611 353,611" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="602" y="450" text-anchor="end" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">맞는</text>
+  <text x="602" y="464" text-anchor="end" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">스킬 없음</text>
+  <polyline points="330,315 330,355" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="338" y="339" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">맞는 스킬 있음</text>
+  <rect x="160" y="355" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="330" y="368" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">A2. message/send (클라이언트 → 서버)</text>
+  <text x="330" y="382" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(JSON-RPC 2.0: Message{role, parts, taskId?, contextId?})</text>
+  <polyline points="330,395 330,415" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="160" y="415" width="340" height="40" fill="#E8F5E9" stroke="#43A047" stroke-width="1.5"/>
+  <text x="330" y="428" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">A3. 태스크 처리 (서버: Calendar Agent)</text>
+  <text x="330" y="442" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(Task 생성/이어받기 → 일정 확인 → status · artifacts 채움)</text>
+  <polyline points="330,455 330,475" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="160" y="475" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="330" y="488" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">A4. 태스크 상태 확인 (클라이언트)</text>
+  <text x="330" y="502" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(completed / input-required / failed)</text>
+  <polyline points="160,495 50,495 50,375 159,375" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="56" y="418" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">input-required</text>
+  <text x="56" y="432" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">(사용자 답변을</text>
+  <text x="56" y="446" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666"> 같은 taskId 로)</text>
+  <polyline points="330,515 330,600" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="338" y="547" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">completed → artifacts 결과</text>
+  <text x="338" y="561" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">failed → 오류 안내</text>
+  <rect x="308" y="600" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="330" y="611" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <polyline points="330,622 330,685" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="160" y="685" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="330" y="698" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M3. 비서 답변 출력</text>
+  <text x="330" y="712" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(원격 에이전트의 결과 / 처리 불가 안내)</text>
+  <polyline points="330,725 330,745" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="308" y="745" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="330" y="756" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <text x="330" y="206" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">A2A 통신 구간 (Agent ↔ Agent, HTTP + JSON-RPC)</text>
+  <text x="330" y="219" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="10" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(초록 노드는 원격 서버에서 실행 — 클라이언트는 카드와 프로토콜만 안다)</text>
+</svg>

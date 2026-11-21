@@ -25,7 +25,37 @@ from langchain_core.messages import SystemMessage, HumanMessage
 
 
 # ---------------------------------------------------------------------------
-# 1. Fake 모델 정의
+# 1. 설정 · 상수
+# ---------------------------------------------------------------------------
+# 생성자에게 줄 원래 작업. 검토자도 이 요구사항을 기준으로 리뷰한다.
+TASK_PROMPT = """
+    `calculate_factorial`이라는 Python 함수를 작성하세요.
+    이 함수는 다음을 수행해야 합니다:
+    - 1. 정수 `n`을 입력으로 받습니다
+    - 2. 팩토리얼(n!)을 계산합니다
+    - 3. 함수의 기능을 설명하는 명확한 docstring을 포함합니다
+    - 4. 엣지 케이스 처리: 0의 팩토리얼은 1입니다
+    - 5. 잘못된 입력 처리: 음수가 입력되면 ValueError를 발생시킵니다
+    """
+
+MAX_ITERATIONS = 3   # 무한 루프 방지를 위한 상한. 실제로는 비용/시간 예산에 맞춰 정한다.
+
+# 검토자 지시문: 종료 조건을 명확히 하기 위해 "완벽하면 CODE_IS_PERFECT만 출력"하도록 지시한다.
+REFLECTOR_SYSTEM_PROMPT = """
+                당신은 시니어 소프트웨어 엔지니어이자 Python 전문가입니다.
+
+                제공된 Python 코드를 원래 작업 요구사항에 따라 꼼꼼하게 코드 리뷰하세요.
+                버그, 스타일 문제, 누락된 엣지 케이스, 개선이 필요한 부분을 찾으세요.
+                코드가 완벽하고 모든 요구사항을 충족하면 'CODE_IS_PERFECT'라고만 응답하세요.
+                그렇지 않으면 피드백을 글머리 기호 목록으로 제공하세요.
+            """
+
+# 2회차부터 생성자에게 덧붙이는 개선 요청
+IMPROVE_REQUEST = "제공된 피드백을 사용하여 코드를 개선해주세요."
+
+
+# ---------------------------------------------------------------------------
+# 2. Fake 모델 정의
 #    생성자와 검토자가 같은 모델을 번갈아 호출하므로, 응답도 "코드 → 비평 → 코드 → 비평" 순으로 번갈아 둔다.
 # ---------------------------------------------------------------------------
 llm = FakeListChatModel(responses=[
@@ -67,32 +97,20 @@ def calculate_factorial(n: int) -> int:
     return result
 ''',
     # [2회차] 검토자: 더 이상 지적 사항 없음 → 루프 종료 신호
-    "CODE_IS_PERFECT"
+    "CODE_IS_PERFECT",
 ])
 
 
 # ---------------------------------------------------------------------------
-# 2. 리플렉션 루프
+# 3. 리플렉션 루프
 # ---------------------------------------------------------------------------
-def run_reflection_loop():
-    # 생성자에게 줄 원래 작업. 검토자도 이 요구사항을 기준으로 리뷰한다.
-    task_prompt = """
-    `calculate_factorial`이라는 Python 함수를 작성하세요.
-    이 함수는 다음을 수행해야 합니다:
-    - 1. 정수 `n`을 입력으로 받습니다
-    - 2. 팩토리얼(n!)을 계산합니다
-    - 3. 함수의 기능을 설명하는 명확한 docstring을 포함합니다
-    - 4. 엣지 케이스 처리: 0의 팩토리얼은 1입니다
-    - 5. 잘못된 입력 처리: 음수가 입력되면 ValueError를 발생시킵니다
-    """
-
-    max_iterations = 3   # 무한 루프 방지를 위한 상한. 실제로는 비용/시간 예산에 맞춰 정한다.
+def run_reflection_loop() -> str:
     current_code = ""
 
     # 생성자의 대화 이력. 코드와 피드백이 누적되므로 2회차부터는 "맥락을 아는 상태"로 코드를 개선한다.
-    message_history = [HumanMessage(content=task_prompt)]
+    message_history = [HumanMessage(content=TASK_PROMPT)]
 
-    for i in range(max_iterations):
+    for i in range(MAX_ITERATIONS):
         print("\n" + "=" * 25 + f" 리플렉션 루프: 반복 {i+1} " + "=" * 25)
 
         # ---- 단계 1: 생성 (Producer) ----
@@ -103,7 +121,7 @@ def run_reflection_loop():
         else:
             # 이전 회차의 피드백이 이미 message_history에 들어있으므로, 개선 요청만 덧붙인다.
             print("\n>>> 단계 1: 이전 피드백 기반으로 코드 개선 중...")
-            message_history.append(HumanMessage(content="제공된 피드백을 사용하여 코드를 개선해주세요."))
+            message_history.append(HumanMessage(content=IMPROVE_REQUEST))
             response = llm.invoke(message_history)
             current_code = response.content
 
@@ -114,17 +132,10 @@ def run_reflection_loop():
         print("\n>>> 단계 2: 생성된 코드 검토 중...")
 
         # 검토자는 생성자의 대화 이력을 공유하지 않고, 별도의 역할(시니어 엔지니어)로 독립 호출한다.
-        # 종료 조건을 명확히 하기 위해 "완벽하면 CODE_IS_PERFECT만 출력"하도록 지시한다.
+        review_request = f"원래 작업:\n{TASK_PROMPT}\n\n검토할 코드:\n{current_code}"
         reflector_prompt = [
-            SystemMessage(content="""
-                당신은 시니어 소프트웨어 엔지니어이자 Python 전문가입니다.
-
-                제공된 Python 코드를 원래 작업 요구사항에 따라 꼼꼼하게 코드 리뷰하세요.
-                버그, 스타일 문제, 누락된 엣지 케이스, 개선이 필요한 부분을 찾으세요.
-                코드가 완벽하고 모든 요구사항을 충족하면 'CODE_IS_PERFECT'라고만 응답하세요.
-                그렇지 않으면 피드백을 글머리 기호 목록으로 제공하세요.
-            """),
-            HumanMessage(content=f"원래 작업:\n{task_prompt}\n\n검토할 코드:\n{current_code}")
+            SystemMessage(content=REFLECTOR_SYSTEM_PROMPT),
+            HumanMessage(content=review_request),
         ]
 
         critique_response = llm.invoke(reflector_prompt)
@@ -139,13 +150,23 @@ def run_reflection_loop():
         print(f"\n--- 피드백 ---\n{critique}")
         message_history.append(HumanMessage(content=f"이전 코드에 대한 피드백:\n{critique}"))
 
-    # ---------------------------------------------------------------------------
-    # 3. 최종 결과
-    #    루프가 CODE_IS_PERFECT로 끝났든, max_iterations에 도달했든 마지막 코드를 출력한다.
-    # ---------------------------------------------------------------------------
+    return current_code
+
+
+# ---------------------------------------------------------------------------
+# 4. 실행
+#    루프가 CODE_IS_PERFECT로 끝났든, MAX_ITERATIONS에 도달했든 마지막 코드를 출력한다.
+# ---------------------------------------------------------------------------
+def print_final_result(final_code: str) -> None:
     print("\n" + "=" * 30 + " 최종 결과 " + "=" * 30)
     print("\n리플렉션 과정 후 최종 코드:\n")
-    print(current_code)
+    print(final_code)
+
+
+def main() -> None:
+    final_code = run_reflection_loop()
+    print_final_result(final_code)
+
 
 if __name__ == "__main__":
-    run_reflection_loop()
+    main()

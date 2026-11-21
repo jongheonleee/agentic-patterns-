@@ -22,7 +22,32 @@ from langchain.agents import create_agent
 
 
 # ---------------------------------------------------------------------------
-# 1. 도구 정의
+# 1. 설정 · 상수
+# ---------------------------------------------------------------------------
+# 에이전트 시스템 프롬프트
+SYSTEM_PROMPT = (
+    "당신은 도움이 되는 어시스턴트입니다. "
+    "사실 확인이 필요하면 search_information 도구를 사용하세요."
+)
+
+# 실제 검색 API 대신 시뮬레이션 결과를 돌려준다.
+SIMULATED_SEARCH_RESULTS = {
+    "런던 날씨": "현재 런던은 흐리고 기온은 15°C입니다.",
+    "프랑스 수도": "프랑스의 수도는 파리입니다.",
+    "지구 인구": "지구의 인구는 약 80억 명으로 추정됩니다.",
+    "가장 높은 산": "에베레스트산은 해발 기준으로 세계에서 가장 높은 산입니다.",
+}
+
+# 데모 질문
+QUERIES = [
+    "프랑스의 수도는 어디인가요?",
+    "런던 날씨는 어때?",
+    "강아지에 대해 알려줘",
+]
+
+
+# ---------------------------------------------------------------------------
+# 2. 도구 정의
 #    @tool 데코레이터가 함수 시그니처와 docstring을 읽어 LLM에 전달할 "도구 스키마"를 만든다.
 #    docstring은 LLM이 도구의 용도를 판단하는 설명이므로 반드시 작성한다.
 # ---------------------------------------------------------------------------
@@ -31,21 +56,16 @@ def search_information(query: str) -> str:
     """주어진 검색어로 정보를 검색한다. 사실 확인이나 최신 정보가 필요할 때 사용한다."""
     print(f"\n--- 도구 호출: search_information(query='{query}') ---")
 
-    # 실제 검색 API 대신 시뮬레이션 결과를 돌려준다.
-    simulated_results = {
-        "런던 날씨": "현재 런던은 흐리고 기온은 15°C입니다.",
-        "프랑스 수도": "프랑스의 수도는 파리입니다.",
-        "지구 인구": "지구의 인구는 약 80억 명으로 추정됩니다.",
-        "가장 높은 산": "에베레스트산은 해발 기준으로 세계에서 가장 높은 산입니다.",
-    }
-
     # 검색어에 키워드가 포함되어 있으면 해당 결과를 반환 (부분 일치)
-    for keyword, answer in simulated_results.items():
+    for keyword, answer in SIMULATED_SEARCH_RESULTS.items():
         if keyword in query:
             result = answer
             break
     else:
-        result = f"'{query}'에 대한 시뮬레이션 검색 결과: 구체적인 정보는 찾지 못했지만 흥미로운 주제로 보입니다."
+        result = (
+            f"'{query}'에 대한 시뮬레이션 검색 결과: "
+            "구체적인 정보는 찾지 못했지만 흥미로운 주제로 보입니다."
+        )
 
     print(f"--- 도구 결과: {result} ---")
     return result
@@ -55,7 +75,7 @@ tools = [search_information]
 
 
 # ---------------------------------------------------------------------------
-# 2. Fake 모델 정의
+# 3. Fake 모델 정의
 #    GenericFakeChatModel은 AIMessage를 순서대로 돌려주므로 tool_calls를 포함한 응답을 흉내낼 수 있다.
 #    다만 bind_tools()가 구현되어 있지 않아, 에이전트가 도구를 바인딩할 수 있도록 오버라이드한다.
 # ---------------------------------------------------------------------------
@@ -70,10 +90,13 @@ class FakeToolCallingModel(GenericFakeChatModel):
 
 def make_tool_call(name: str, args: dict, call_id: str) -> AIMessage:
     """LLM이 '이 도구를 이 인자로 호출해 달라'고 요청하는 AIMessage를 만든다."""
-    return AIMessage(
-        content="",
-        tool_calls=[{"name": name, "args": args, "id": call_id, "type": "tool_call"}],
-    )
+    tool_call = {
+        "name": name,
+        "args": args,
+        "id": call_id,
+        "type": "tool_call",
+    }
+    return AIMessage(content="", tool_calls=[tool_call])
 
 
 # 질문 3개 × (도구 호출 요청 → 최종 답변) = 응답 6개. 호출 순서대로 소비된다.
@@ -88,22 +111,30 @@ llm = FakeToolCallingModel(messages=iter([
 
     # Q3. 강아지 (도구가 구체적인 정보를 찾지 못하는 경우)
     make_tool_call("search_information", {"query": "강아지"}, "call_3"),
-    AIMessage(content="검색에서 구체적인 정보를 찾지 못했지만, 강아지는 인류와 가장 오래 함께한 반려동물 중 하나입니다."),
+    AIMessage(
+        content=(
+            "검색에서 구체적인 정보를 찾지 못했지만, "
+            "강아지는 인류와 가장 오래 함께한 반려동물 중 하나입니다."
+        ),
+    ),
 ]))
 
 
 # ---------------------------------------------------------------------------
-# 3. 에이전트 생성
+# 4. 에이전트 생성
 #    create_agent가 내부적으로 "LLM 호출 → tool_calls 있으면 도구 실행 → 결과를 LLM에 재전달" 루프를 수행한다.
 #    (LangChain 1.0부터 AgentExecutor / create_tool_calling_agent 대신 create_agent를 사용한다.)
 # ---------------------------------------------------------------------------
 agent = create_agent(
     model=llm,
     tools=tools,
-    system_prompt="당신은 도움이 되는 어시스턴트입니다. 사실 확인이 필요하면 search_information 도구를 사용하세요.",
+    system_prompt=SYSTEM_PROMPT,
 )
 
 
+# ---------------------------------------------------------------------------
+# 5. 실행
+# ---------------------------------------------------------------------------
 def run_agent_with_tool(query: str) -> None:
     print("\n" + "=" * 20 + f" 질문: '{query}' " + "=" * 20)
 
@@ -124,14 +155,9 @@ def run_agent_with_tool(query: str) -> None:
 
 
 def main() -> None:
-    queries = [
-        "프랑스의 수도는 어디인가요?",
-        "런던 날씨는 어때?",
-        "강아지에 대해 알려줘",
-    ]
     # Fake 모델은 응답을 순서대로 소비하므로 질문을 순차적으로 처리한다.
     # (실제 모델이라면 asyncio.gather + agent.ainvoke로 병렬 실행도 가능하다.)
-    for query in queries:
+    for query in QUERIES:
         run_agent_with_tool(query)
 
 

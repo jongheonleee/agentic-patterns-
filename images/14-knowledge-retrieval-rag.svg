@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 645" width="640" height="645" style="background:#FFFFFF">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+    </marker>
+  </defs>
+  <rect width="640" height="645" fill="#FFFFFF"/>
+  <rect x="278" y="9" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="300" y="20" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="300,31 300,55" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="90.0" y="55" width="420" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="300" y="68" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M1. 색인 (Indexing, 시작 시 1회)</text>
+  <text x="300" y="82" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(KNOWLEDGE_BASE → 청킹 → Fake 임베딩 → InMemoryVectorStore)</text>
+  <polyline points="300,95 300,115" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="130.0" y="115" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="300" y="128" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M2. 사용자 질문 입력</text>
+  <text x="300" y="142" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(예: 연차 휴가는 며칠이야?)</text>
+  <rect x="40" y="190" width="560" height="320" fill="#FBF4FB" stroke="#E53935" stroke-width="1"/>
+  <polyline points="300,155 300,234" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="278" y="234" width="44" height="22" rx="11" ry="11" fill="#FFFFFF" stroke="#333333" stroke-width="1"/>
+  <text x="300" y="245" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">start</text>
+  <polyline points="300,256 300,275" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="100.0" y="275" width="400" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="300" y="288" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">R1. retrieve (검색)</text>
+  <text x="300" y="302" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(질문 임베딩 → 유사도 상위 TOP_K 청크 → 기준점 미만 제거)</text>
+  <polyline points="300,315 300,335" fill="none" stroke="#333333" stroke-width="1"/>
+  <polyline points="300,335 175,335 175,374" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="183" y="357" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">관련 청크 있음</text>
+  <polyline points="300,335 425,335 425,374" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="433" y="357" text-anchor="start" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#666666">관련 청크 없음</text>
+  <rect x="60.0" y="375" width="230" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="175" y="388" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">R2. generate (생성)</text>
+  <text x="175" y="402" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(청크 + 출처를 컨텍스트로 → LLM 답변)</text>
+  <rect x="310.0" y="375" width="230" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="425" y="388" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">R3. no_answer</text>
+  <text x="425" y="402" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(지어내지 않고 "찾지 못했다" 안내)</text>
+  <polyline points="175,415 175,471 277,471" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <polyline points="425,415 425,471 323,471" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="278" y="460" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="300" y="471" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <polyline points="300,482 300,545" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="130.0" y="545" width="340" height="40" fill="#ECECFF" stroke="#9370DB" stroke-width="1"/>
+  <text x="300" y="558" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="12" fill="#333333">M3. 답변 출력</text>
+  <text x="300" y="572" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#333333">(근거 문장 + [출처: 핸드북 n장] / 또는 안내 메시지)</text>
+  <polyline points="300,585 300,605" fill="none" stroke="#333333" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="278" y="605" width="44" height="22" rx="11" ry="11" fill="#9370DB" stroke="#9370DB" stroke-width="1"/>
+  <text x="300" y="616" dy="0.35em" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">end</text>
+  <text x="300.0" y="206" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="11" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">RAG 그래프 (Retrieve → Generate)</text>
+  <text x="300.0" y="219" text-anchor="middle" font-family="'Trebuchet MS', Verdana, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="10" fill="#E53935" stroke="#FBF4FB" stroke-width="4" stroke-linejoin="round" paint-order="stroke">(근거가 있을 때만 LLM 이 답하고, 없으면 모른다고 답해 환각을 막는다)</text>
+</svg>

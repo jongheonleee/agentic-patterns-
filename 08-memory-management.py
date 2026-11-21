@@ -52,7 +52,54 @@ from langgraph.store.memory import InMemoryStore
 
 
 # ---------------------------------------------------------------------------
-# 1. Fake 모델 정의
+# 1. 설정 · 상수
+# ---------------------------------------------------------------------------
+# 가짜 임베딩 벡터의 차원 수
+EMBED_DIMS = 128
+
+# 절차적 기억(에이전트 지침)은 사용자와 무관하므로 별도 네임스페이스에 하나의 키로 둔다.
+INSTRUCTIONS_NAMESPACE = ("agent_instructions",)
+INSTRUCTIONS_KEY = "travel_agent"
+INITIAL_INSTRUCTIONS = "당신은 친절한 여행 비서입니다. 항공편·호텔·일정 관련 요청을 돕습니다."
+
+# 기억 관리 모델에게 주는 역할
+EXTRACT_ROLE = (
+    "당신은 기억 관리자입니다. 아래 대화 한 턴에서 앞으로도 기억할 가치가 있는 사용자 정보"
+    "(이름, 선호, 일정, 제약 조건 등)를 한 문장으로 추출하세요. 없으면 'NONE'만 출력하세요."
+)
+
+REFLECT_ROLE = (
+    "당신은 여행 비서 에이전트의 코치입니다. 현재 지침과 대화 기록을 보고, "
+    "다음 세션에서 더 잘 응대하기 위해 지침에 추가할 행동 규칙을 도출하세요. "
+    "기존 지침을 유지하면서 규칙을 글머리 기호로 덧붙인 '새 지침 전체'를 출력하세요."
+)
+
+# 데모 입력
+USER_ID = "sam"
+
+SESSION_1_INPUTS = [
+    "다음 주에 뉴욕으로 출장을 가요.",
+    "항공편을 예약하고 싶어요. 저는 창가 좌석을 좋아해요.",
+    "그리고 제 이름은 샘이에요.",
+    "제 이름이 뭐였죠?",
+]
+SESSION_2_INPUT = "안녕하세요, 이번엔 도쿄 여행을 계획 중이에요."
+SESSION_3_INPUT = "다음 달에는 파리 출장도 있어요."
+
+
+# ---------------------------------------------------------------------------
+# 2. 상태(State) 정의
+#    MessagesState의 `messages` 키는 add_messages 리듀서로 누적된다. (단기 기억)
+#    여기에 "이번 턴에 스토어에서 꺼내 온 것"과 "이번 턴에 새로 알게 된 것"을 담는 키를 추가한다.
+# ---------------------------------------------------------------------------
+class MemoryAgentState(MessagesState):
+    recalled_memories: list[str]   # L2: 스토어에서 검색한 장기 기억
+    instructions: str              # L3: 스토어에서 읽은 절차적 기억(지침)
+    new_fact: str                  # S1: 이번 턴에서 추출한 새 사실 ("NONE"이면 없음)
+
+
+# ---------------------------------------------------------------------------
+# 3. Fake 모델 정의
 #    대화 모델과 기억 관리 모델을 분리해 두면, 각 모델의 호출 순서를 따로 추적할 수 있다.
 # ---------------------------------------------------------------------------
 llm = FakeListChatModel(responses=[
@@ -91,14 +138,6 @@ memory_llm = FakeListChatModel(responses=[
 ])
 
 
-# ---------------------------------------------------------------------------
-# 2. 장기 기억 스토어 정의
-#    InMemoryStore는 (namespace, key) → value 구조의 저장소다.
-#    index에 임베딩 함수를 넣으면 store.search(query=...)로 "의미 검색"이 가능해진다.
-# ---------------------------------------------------------------------------
-EMBED_DIMS = 128
-
-
 def fake_embed(texts: list[str]) -> list[list[float]]:
     """학습용 가짜 임베딩: 글자 2개 단위(바이그램)를 해시해 고정 차원 벡터에 담는다.
     실제로는 OpenAIEmbeddings 같은 임베딩 모델을 넣는다. 겹치는 단어가 많을수록 코사인 유사도가 높아진다."""
@@ -112,45 +151,42 @@ def fake_embed(texts: list[str]) -> list[list[float]]:
     return vectors
 
 
-store = InMemoryStore(index={"embed": fake_embed, "dims": EMBED_DIMS})
-
-# 절차적 기억(에이전트 지침)은 사용자와 무관하므로 별도 네임스페이스에 하나의 키로 둔다.
-INSTRUCTIONS_NAMESPACE = ("agent_instructions",)
-INSTRUCTIONS_KEY = "travel_agent"
-store.put(
-    INSTRUCTIONS_NAMESPACE,
-    INSTRUCTIONS_KEY,
-    {"instructions": "당신은 친절한 여행 비서입니다. 항공편·호텔·일정 관련 요청을 돕습니다."},
-)
-
-
+# ---------------------------------------------------------------------------
+# 4. 헬퍼 함수
+# ---------------------------------------------------------------------------
 def memories_namespace(config: RunnableConfig) -> tuple[str, str]:
     """장기 기억은 사용자별로 분리한다: (user_id, "memories")"""
     return (config["configurable"]["user_id"], "memories")
 
 
-# ---------------------------------------------------------------------------
-# 3. 상태 정의
-#    MessagesState의 `messages` 키는 add_messages 리듀서로 누적된다. (단기 기억)
-#    여기에 "이번 턴에 스토어에서 꺼내 온 것"과 "이번 턴에 새로 알게 된 것"을 담는 키를 추가한다.
-# ---------------------------------------------------------------------------
-class MemoryAgentState(MessagesState):
-    recalled_memories: list[str]   # L2: 스토어에서 검색한 장기 기억
-    instructions: str              # L3: 스토어에서 읽은 절차적 기억(지침)
-    new_fact: str                  # S1: 이번 턴에서 추출한 새 사실 ("NONE"이면 없음)
+def build_system_prompt(instructions: str, memories: list[str]) -> str:
+    """절차적 기억(지침)과 장기 기억을 시스템 프롬프트 하나로 합친다."""
+    prompt = instructions
+    if memories:
+        prompt += "\n\n[사용자에 대해 기억하는 것]\n" + "\n".join(f"- {m}" for m in memories)
+    return prompt
 
 
 # ---------------------------------------------------------------------------
-# 4. 노드 정의
+# 5. 노드 정의
 # ---------------------------------------------------------------------------
-def load_memories(state: MemoryAgentState, config: RunnableConfig, *, store: BaseStore) -> dict:
+def load_memories(
+    state: MemoryAgentState,
+    config: RunnableConfig,
+    *,
+    store: BaseStore,
+) -> dict:
     """[L1~L3] 세 종류의 기억을 불러온다.
     L1(단기)은 체크포인터가 이미 state["messages"]에 복원해 두었으므로, 여기서는 확인만 한다."""
     print(f"--- L1. 단기 기억: 이 thread의 메시지 {len(state['messages'])}개 복원됨 ---")
 
     # L2. 장기 기억: 최신 사용자 메시지를 질의로 삼아 관련 기억을 의미 검색한다.
     latest_user_message = state["messages"][-1].content
-    items = store.search(memories_namespace(config), query=latest_user_message, limit=5)
+    items = store.search(
+        memories_namespace(config),
+        query=latest_user_message,
+        limit=5,
+    )
     memories = [item.value["content"] for item in items]
     print(f"--- L2. 장기 기억 검색 결과 ({len(memories)}개) ---")
     for item in items:
@@ -162,37 +198,30 @@ def load_memories(state: MemoryAgentState, config: RunnableConfig, *, store: Bas
     return {"recalled_memories": memories, "instructions": instructions}
 
 
-def build_system_prompt(instructions: str, memories: list[str]) -> str:
-    """절차적 기억(지침)과 장기 기억을 시스템 프롬프트 하나로 합친다."""
-    prompt = instructions
-    if memories:
-        prompt += "\n\n[사용자에 대해 기억하는 것]\n" + "\n".join(f"- {m}" for m in memories)
-    return prompt
-
-
 def call_model(state: MemoryAgentState) -> dict:
     """[M2] 지침 + 장기 기억(시스템 프롬프트) + 대화 이력(단기 기억)으로 모델을 호출한다."""
     system_prompt = build_system_prompt(state["instructions"], state["recalled_memories"])
     print("--- M2. 모델 호출 (시스템 프롬프트) ---")
     print("    " + system_prompt.replace("\n", "\n    "))
 
-    response = llm.invoke([SystemMessage(content=system_prompt), *state["messages"]])
+    response = llm.invoke([
+        SystemMessage(content=system_prompt),
+        *state["messages"],
+    ])
     return {"messages": [response]}   # add_messages 리듀서가 기존 이력 뒤에 덧붙인다
-
-
-EXTRACT_ROLE = (
-    "당신은 기억 관리자입니다. 아래 대화 한 턴에서 앞으로도 기억할 가치가 있는 사용자 정보"
-    "(이름, 선호, 일정, 제약 조건 등)를 한 문장으로 추출하세요. 없으면 'NONE'만 출력하세요."
-)
 
 
 def extract_memory(state: MemoryAgentState) -> dict:
     """[S1] 이번 턴(사용자 메시지 + AI 응답)에서 장기 기억으로 남길 사실을 추출한다."""
-    user_message, ai_message = state["messages"][-2], state["messages"][-1]
-    fact = memory_llm.invoke([
+    user_message = state["messages"][-2]
+    ai_message = state["messages"][-1]
+    turn = f"사용자: {user_message.content}\nAI: {ai_message.content}"
+
+    response = memory_llm.invoke([
         SystemMessage(content=EXTRACT_ROLE),
-        HumanMessage(content=f"사용자: {user_message.content}\nAI: {ai_message.content}"),
-    ]).content.strip()
+        HumanMessage(content=turn),
+    ])
+    fact = response.content.strip()
     return {"new_fact": fact}
 
 
@@ -204,18 +233,61 @@ def has_new_fact(state: MemoryAgentState) -> str:
     return "save"
 
 
-def save_memory(state: MemoryAgentState, config: RunnableConfig, *, store: BaseStore) -> None:
+def save_memory(
+    state: MemoryAgentState,
+    config: RunnableConfig,
+    *,
+    store: BaseStore,
+) -> None:
     """[S2] 추출한 사실을 사용자 네임스페이스에 저장한다. 키는 고유 ID로 둔다."""
-    store.put(memories_namespace(config), str(uuid.uuid4()), {"content": state["new_fact"]})
+    store.put(
+        memories_namespace(config),
+        str(uuid.uuid4()),
+        {"content": state["new_fact"]},
+    )
     print(f"--- S2. 장기 기억 저장: '{state['new_fact']}' ---")
 
 
 # ---------------------------------------------------------------------------
-# 5. 그래프 조립
+# 6. 절차적 기억 갱신 (회고)
+#    세션이 끝난 뒤 대화를 돌아보며 "다음부터 이렇게 행동하자"는 지침을 다시 쓴다.
+#    04. Reflection 패턴을 기억 갱신에 적용한 것으로, 그래프 밖에서 실행한다.
+# ---------------------------------------------------------------------------
+def update_instructions(conversation: list[BaseMessage], store: BaseStore) -> None:
+    """[P1~P2] 대화를 회고하고(P1) 스토어의 지침을 갱신한다(P2)."""
+    current = store.get(INSTRUCTIONS_NAMESPACE, INSTRUCTIONS_KEY).value["instructions"]
+    transcript = "\n".join(
+        f"{'사용자' if isinstance(m, HumanMessage) else 'AI'}: {m.content}" for m in conversation
+    )
+
+    print("--- P1. 대화 회고 중... ---")
+    response = memory_llm.invoke([
+        SystemMessage(content=REFLECT_ROLE),
+        HumanMessage(content=f"[현재 지침]\n{current}\n\n[대화 기록]\n{transcript}"),
+    ])
+    new_instructions = response.content
+
+    store.put(INSTRUCTIONS_NAMESPACE, INSTRUCTIONS_KEY, {"instructions": new_instructions})
+    print("--- P2. 지침 갱신 완료 ---")
+    print("    " + new_instructions.replace("\n", "\n    "))
+
+
+# ---------------------------------------------------------------------------
+# 7. 그래프 구성
+#    InMemoryStore는 (namespace, key) → value 구조의 저장소다.
+#    index에 임베딩 함수를 넣으면 store.search(query=...)로 "의미 검색"이 가능해진다.
+#
 #    START → load_memories → call_model → extract_memory ─(save)→ save_memory → END
 #                                                        └(skip)──────────────→ END
 #    compile() 에 checkpointer(단기 기억)와 store(장기 기억)를 함께 넘긴다.
 # ---------------------------------------------------------------------------
+store = InMemoryStore(index={"embed": fake_embed, "dims": EMBED_DIMS})
+store.put(
+    INSTRUCTIONS_NAMESPACE,
+    INSTRUCTIONS_KEY,
+    {"instructions": INITIAL_INSTRUCTIONS},
+)
+
 graph_builder = StateGraph(MemoryAgentState)
 
 graph_builder.add_node("load_memories", load_memories)
@@ -243,57 +315,27 @@ memory_agent = graph_builder.compile(
 
 
 # ---------------------------------------------------------------------------
-# 6. 절차적 기억 갱신 (회고)
-#    세션이 끝난 뒤 대화를 돌아보며 "다음부터 이렇게 행동하자"는 지침을 다시 쓴다.
-#    04. Reflection 패턴을 기억 갱신에 적용한 것으로, 그래프 밖에서 실행한다.
-# ---------------------------------------------------------------------------
-REFLECT_ROLE = (
-    "당신은 여행 비서 에이전트의 코치입니다. 현재 지침과 대화 기록을 보고, "
-    "다음 세션에서 더 잘 응대하기 위해 지침에 추가할 행동 규칙을 도출하세요. "
-    "기존 지침을 유지하면서 규칙을 글머리 기호로 덧붙인 '새 지침 전체'를 출력하세요."
-)
-
-
-def update_instructions(conversation: list[BaseMessage], store: BaseStore) -> None:
-    """[P1~P2] 대화를 회고하고(P1) 스토어의 지침을 갱신한다(P2)."""
-    current = store.get(INSTRUCTIONS_NAMESPACE, INSTRUCTIONS_KEY).value["instructions"]
-    transcript = "\n".join(
-        f"{'사용자' if isinstance(m, HumanMessage) else 'AI'}: {m.content}" for m in conversation
-    )
-
-    print("--- P1. 대화 회고 중... ---")
-    new_instructions = memory_llm.invoke([
-        SystemMessage(content=REFLECT_ROLE),
-        HumanMessage(content=f"[현재 지침]\n{current}\n\n[대화 기록]\n{transcript}"),
-    ]).content
-
-    store.put(INSTRUCTIONS_NAMESPACE, INSTRUCTIONS_KEY, {"instructions": new_instructions})
-    print("--- P2. 지침 갱신 완료 ---")
-    print("    " + new_instructions.replace("\n", "\n    "))
-
-
-# ---------------------------------------------------------------------------
-# 7. 실행
+# 8. 실행
 # ---------------------------------------------------------------------------
 def chat(thread_id: str, user_id: str, text: str) -> None:
     """한 턴 대화. thread_id는 단기 기억(대화)의 키, user_id는 장기 기억(사용자)의 키다."""
     config: RunnableConfig = {"configurable": {"thread_id": thread_id, "user_id": user_id}}
     print(f"\n[사용자] {text}")
-    result = memory_agent.invoke({"messages": [HumanMessage(content=text)]}, config=config)
+
+    result = memory_agent.invoke(
+        {"messages": [HumanMessage(content=text)]},
+        config=config,
+    )
     print(f"[AI] {result['messages'][-1].content}")
 
 
 def main() -> None:
-    user_id = "sam"
-
     print("=" * 25 + " 세션 1: thread 'trip-1' (단기 기억 누적) " + "=" * 25)
-    chat("trip-1", user_id, "다음 주에 뉴욕으로 출장을 가요.")
-    chat("trip-1", user_id, "항공편을 예약하고 싶어요. 저는 창가 좌석을 좋아해요.")
-    chat("trip-1", user_id, "그리고 제 이름은 샘이에요.")
-    chat("trip-1", user_id, "제 이름이 뭐였죠?")
+    for text in SESSION_1_INPUTS:
+        chat("trip-1", USER_ID, text)
 
     print("\n\n" + "=" * 25 + " 세션 2: 새 thread 'trip-2' (장기 기억으로 회상) " + "=" * 25)
-    chat("trip-2", user_id, "안녕하세요, 이번엔 도쿄 여행을 계획 중이에요.")
+    chat("trip-2", USER_ID, SESSION_2_INPUT)
 
     print("\n\n" + "=" * 25 + " 회고: 세션 1을 돌아보며 지침 갱신 (절차적 기억) " + "=" * 25)
     # 체크포인터에서 세션 1의 대화 이력을 꺼내 회고 재료로 쓴다.
@@ -301,10 +343,10 @@ def main() -> None:
     update_instructions(session_1.values["messages"], store)
 
     print("\n\n" + "=" * 25 + " 세션 3: 새 thread 'trip-3' (갱신된 지침 적용) " + "=" * 25)
-    chat("trip-3", user_id, "다음 달에는 파리 출장도 있어요.")
+    chat("trip-3", USER_ID, SESSION_3_INPUT)
 
     print("\n\n" + "=" * 30 + " 스토어에 남은 장기 기억 " + "=" * 30)
-    for item in store.search((user_id, "memories")):
+    for item in store.search((USER_ID, "memories")):
         print(f"- {item.value['content']}")
 
 

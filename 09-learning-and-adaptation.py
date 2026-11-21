@@ -50,81 +50,50 @@ from langgraph.graph import StateGraph, START, END
 
 
 # ---------------------------------------------------------------------------
-# 1. 초기 프로그램 (initial_program)
-#    진화의 출발점. 정확하지만 지수 시간이 걸리는 순진한 재귀 구현이다.
+# 1. 설정 · 상수
 # ---------------------------------------------------------------------------
+# 초기 프로그램 (initial_program)
+# 진화의 출발점. 정확하지만 지수 시간이 걸리는 순진한 재귀 구현이다.
 INITIAL_PROGRAM = '''\
 def fib(n):
     if n < 2:
         return n
     return fib(n - 1) + fib(n - 2)
 '''
+INITIAL_DESCRIPTION = "초기 프로그램 (순진한 재귀)"
 
+# 진화 루프 설정
 MAX_GENERATIONS = 4   # OpenEvolve의 iterations 에 해당
 
-
-# ---------------------------------------------------------------------------
-# 2. 평가기 (evaluator)
-#    프로그램을 실제로 실행해 지표를 계산한다. OpenEvolve의 evaluation_file 역할.
-#    - correctness : 테스트 통과율 (0~1)
-#    - calls       : fib(22) 계산에 든 함수 호출 횟수 (적을수록 효율적, 결정적으로 측정됨)
-#    - combined    : 두 지표를 합친 종합 점수. 선택(select) 단계는 이 값만 본다.
-# ---------------------------------------------------------------------------
+# 평가기 설정
 TEST_CASES = [(0, 0), (1, 1), (2, 1), (5, 5), (10, 55), (20, 6765)]
 BENCHMARK_N = 22
+EVOLVED_FILENAME = "<evolved>"   # 진화 대상 코드를 컴파일할 때 붙이는 파일 이름 (호출 횟수 측정에 활용)
+
+MUTATOR_ROLE = (
+    "당신은 코드 최적화 전문가입니다. 주어진 '현재 최고 프로그램'을 더 정확하고 효율적으로 개선한 "
+    "새 버전을 제안하세요. 함수 이름과 시그니처(fib(n))는 유지해야 합니다. "
+    "첫 줄에 '변이 설명: ...' 을 쓰고, 그 아래 ```python 코드 블록으로 전체 프로그램을 출력하세요."
+)
 
 
-def load_program(code: str) -> dict:
-    """코드 문자열을 격리된 네임스페이스에서 실행해 정의된 이름들을 돌려준다."""
-    namespace: dict = {}
-    exec(compile(code, "<evolved>", "exec"), namespace)   # filename을 지정해 호출 횟수 측정에 활용
-    return namespace
+# ---------------------------------------------------------------------------
+# 2. 상태(State) 정의
+# ---------------------------------------------------------------------------
+class Program(TypedDict):
+    code: str
+    metrics: dict
+    description: str
 
 
-def count_calls(fn, n: int) -> int:
-    """fn(n)을 실행하는 동안 진화 대상 프로그램 안에서 일어난 파이썬 함수 호출 횟수를 센다."""
-    calls = 0
-
-    def profiler(frame, event, _):
-        nonlocal calls
-        if event == "call" and frame.f_code.co_filename == "<evolved>":
-            calls += 1
-
-    sys.setprofile(profiler)
-    try:
-        fn(n)
-    finally:
-        sys.setprofile(None)
-    return calls
-
-
-def evaluate_program(code: str) -> tuple[dict, list[str]]:
-    """프로그램을 평가해 (metrics, feedback) 을 돌려준다. feedback은 다음 변이 때 LLM에 전달된다."""
-    feedback: list[str] = []
-    try:
-        fib = load_program(code)["fib"]
-        passed = 0
-        for n, expected in TEST_CASES:
-            actual = fib(n)
-            if actual == expected:
-                passed += 1
-            else:
-                feedback.append(f"fib({n}) 기대값 {expected}, 실제값 {actual}")
-        correctness = passed / len(TEST_CASES)
-
-        # 효율은 캐시 등 내부 상태가 비어 있는 "새로 로드한" 프로그램으로 측정한다.
-        calls = count_calls(load_program(code)["fib"], BENCHMARK_N)
-    except Exception as e:   # 문법 오류, 실행 오류 등
-        feedback.append(f"실행 오류: {type(e).__name__}: {e}")
-        correctness, calls = 0.0, math.inf
-
-    efficiency = 0.0 if calls == math.inf else 1 / (1 + math.log10(max(calls, 1)))   # 호출 1회 이하면 1.0
-    metrics = {
-        "correctness": correctness,
-        "calls": calls,
-        "combined": round(0.7 * correctness + 0.3 * efficiency, 3),
-    }
-    return metrics, feedback
+class EvolutionState(TypedDict):
+    generation: int                              # 현재 세대 번호
+    best: Program                                # 지금까지의 최고 프로그램
+    candidate: Program                           # 이번 세대에 LLM이 제안한 자식 프로그램
+    feedback: list[str]                          # 최근 평가에서 나온 실패 피드백 (다음 변이에 전달)
+    accepted: bool                               # 이번 세대 채택 여부
+    history: Annotated[list[dict], operator.add] # 세대별 기록 (아카이브), 누적
+    best_program: Program                        # 종료 시 보고용 (그래프 밖에서 쓰는 결과)
 
 
 # ---------------------------------------------------------------------------
@@ -179,11 +148,70 @@ def fib(n):
 ```""",
 ])
 
-MUTATOR_ROLE = (
-    "당신은 코드 최적화 전문가입니다. 주어진 '현재 최고 프로그램'을 더 정확하고 효율적으로 개선한 "
-    "새 버전을 제안하세요. 함수 이름과 시그니처(fib(n))는 유지해야 합니다. "
-    "첫 줄에 '변이 설명: ...' 을 쓰고, 그 아래 ```python 코드 블록으로 전체 프로그램을 출력하세요."
-)
+
+# ---------------------------------------------------------------------------
+# 4. 평가기 (evaluator) · 헬퍼 함수
+#    프로그램을 실제로 실행해 지표를 계산한다. OpenEvolve의 evaluation_file 역할.
+#    - correctness : 테스트 통과율 (0~1)
+#    - calls       : fib(22) 계산에 든 함수 호출 횟수 (적을수록 효율적, 결정적으로 측정됨)
+#    - combined    : 두 지표를 합친 종합 점수. 선택(select) 단계는 이 값만 본다.
+# ---------------------------------------------------------------------------
+def load_program(code: str) -> dict:
+    """코드 문자열을 격리된 네임스페이스에서 실행해 정의된 이름들을 돌려준다."""
+    namespace: dict = {}
+    exec(compile(code, EVOLVED_FILENAME, "exec"), namespace)   # filename을 지정해 호출 횟수 측정에 활용
+    return namespace
+
+
+def count_calls(fn, n: int) -> int:
+    """fn(n)을 실행하는 동안 진화 대상 프로그램 안에서 일어난 파이썬 함수 호출 횟수를 센다."""
+    calls = 0
+
+    def profiler(frame, event, _):
+        nonlocal calls
+        if event == "call" and frame.f_code.co_filename == EVOLVED_FILENAME:
+            calls += 1
+
+    sys.setprofile(profiler)
+    try:
+        fn(n)
+    finally:
+        sys.setprofile(None)
+    return calls
+
+
+def evaluate_program(code: str) -> tuple[dict, list[str]]:
+    """프로그램을 평가해 (metrics, feedback) 을 돌려준다. feedback은 다음 변이 때 LLM에 전달된다."""
+    feedback: list[str] = []
+    try:
+        fib = load_program(code)["fib"]
+        passed = 0
+        for n, expected in TEST_CASES:
+            actual = fib(n)
+            if actual == expected:
+                passed += 1
+            else:
+                feedback.append(f"fib({n}) 기대값 {expected}, 실제값 {actual}")
+        correctness = passed / len(TEST_CASES)
+
+        # 효율은 캐시 등 내부 상태가 비어 있는 "새로 로드한" 프로그램으로 측정한다.
+        calls = count_calls(load_program(code)["fib"], BENCHMARK_N)
+    except Exception as e:   # 문법 오류, 실행 오류 등
+        feedback.append(f"실행 오류: {type(e).__name__}: {e}")
+        correctness = 0.0
+        calls = math.inf
+
+    if calls == math.inf:
+        efficiency = 0.0
+    else:
+        efficiency = 1 / (1 + math.log10(max(calls, 1)))   # 호출 1회 이하면 1.0
+
+    metrics = {
+        "correctness": correctness,
+        "calls": calls,
+        "combined": round(0.7 * correctness + 0.3 * efficiency, 3),
+    }
+    return metrics, feedback
 
 
 def parse_mutation(response: str) -> tuple[str, str]:
@@ -195,55 +223,49 @@ def parse_mutation(response: str) -> tuple[str, str]:
 
 
 # ---------------------------------------------------------------------------
-# 4. 상태 정의
-# ---------------------------------------------------------------------------
-class Program(TypedDict):
-    code: str
-    metrics: dict
-    description: str
-
-
-class EvolutionState(TypedDict):
-    generation: int                              # 현재 세대 번호
-    best: Program                                # 지금까지의 최고 프로그램
-    candidate: Program                           # 이번 세대에 LLM이 제안한 자식 프로그램
-    feedback: list[str]                          # 최근 평가에서 나온 실패 피드백 (다음 변이에 전달)
-    accepted: bool                               # 이번 세대 채택 여부
-    history: Annotated[list[dict], operator.add] # 세대별 기록 (아카이브), 누적
-    best_program: Program                        # 종료 시 보고용 (그래프 밖에서 쓰는 결과)
-
-
-# ---------------------------------------------------------------------------
 # 5. 노드 정의
 # ---------------------------------------------------------------------------
 def mutate_node(state: EvolutionState) -> dict:
     """[T1 변이] 최고 프로그램 + 지표 + 이전 피드백을 LLM에 보여주고 개선된 자식 프로그램을 받는다."""
     generation = state["generation"] + 1
     best = state["best"]
-    print(f"\n>>> 세대 {generation}: [T1] 변이 중... (부모 combined={best['metrics']['combined']})")
+    best_metrics = best["metrics"]
+    print(f"\n>>> 세대 {generation}: [T1] 변이 중... (부모 combined={best_metrics['combined']})")
 
     request = (
-        f"[현재 최고 프로그램] (combined={best['metrics']['combined']}, "
-        f"correctness={best['metrics']['correctness']:.2f}, calls={best['metrics']['calls']})\n"
+        f"[현재 최고 프로그램] (combined={best_metrics['combined']}, "
+        f"correctness={best_metrics['correctness']:.2f}, calls={best_metrics['calls']})\n"
         f"```python\n{best['code']}```"
     )
     if state.get("feedback"):   # 직전 후보가 실패했다면 그 이유를 함께 알려준다 (OpenEvolve의 artifacts)
         request += "\n\n[직전 제안의 실패 피드백]\n" + "\n".join(f"- {f}" for f in state["feedback"])
 
-    response = llm.invoke([SystemMessage(content=MUTATOR_ROLE), HumanMessage(content=request)])
+    response = llm.invoke([
+        SystemMessage(content=MUTATOR_ROLE),
+        HumanMessage(content=request),
+    ])
     description, code = parse_mutation(response.content)
     print(f"--- 제안: {description} ---")
     print("    " + code.strip().replace("\n", "\n    "))
 
-    return {"generation": generation, "candidate": {"code": code, "metrics": {}, "description": description}}
+    candidate = {
+        "code": code,
+        "metrics": {},
+        "description": description,
+    }
+    return {"generation": generation, "candidate": candidate}
 
 
 def evaluate_node(state: EvolutionState) -> dict:
     """[T2 평가] 자식 프로그램을 실행해 지표를 측정한다."""
     print("[T2] 평가 중...")
+
     metrics, feedback = evaluate_program(state["candidate"]["code"])
-    print(f"--- 지표: correctness={metrics['correctness']:.2f}, calls={metrics['calls']}, "
-          f"combined={metrics['combined']} ---")
+
+    print(
+        f"--- 지표: correctness={metrics['correctness']:.2f}, calls={metrics['calls']}, "
+        f"combined={metrics['combined']} ---"
+    )
     for f in feedback:
         print(f"    ✗ {f}")
     return {"candidate": {**state["candidate"], "metrics": metrics}, "feedback": feedback}
@@ -251,14 +273,22 @@ def evaluate_node(state: EvolutionState) -> dict:
 
 def select_node(state: EvolutionState) -> dict:
     """[T3 선택] 자식이 최고 프로그램보다 종합 점수가 높으면 채택(best 갱신), 아니면 기각."""
-    candidate, best = state["candidate"], state["best"]
-    accepted = candidate["metrics"]["combined"] > best["metrics"]["combined"]
+    candidate = state["candidate"]
+    best = state["best"]
+    candidate_score = candidate["metrics"]["combined"]
+    best_score = best["metrics"]["combined"]
+    accepted = candidate_score > best_score
 
     if accepted:
-        print(f"[T3] 채택 ✓  combined {best['metrics']['combined']} → {candidate['metrics']['combined']} (best 갱신)")
+        print(f"[T3] 채택 ✓  combined {best_score} → {candidate_score} (best 갱신)")
+        new_best = candidate
     else:
-        reason = "테스트 실패" if candidate["metrics"]["correctness"] < 1 else "기존 최고보다 효율이 낮음"
-        print(f"[T3] 기각 ✗  combined {candidate['metrics']['combined']} ≤ {best['metrics']['combined']} ({reason})")
+        if candidate["metrics"]["correctness"] < 1:
+            reason = "테스트 실패"
+        else:
+            reason = "기존 최고보다 효율이 낮음"
+        print(f"[T3] 기각 ✗  combined {candidate_score} ≤ {best_score} ({reason})")
+        new_best = best
 
     record = {
         "generation": state["generation"],
@@ -266,12 +296,14 @@ def select_node(state: EvolutionState) -> dict:
         "metrics": candidate["metrics"],
         "accepted": accepted,
     }
-    return {"best": candidate if accepted else best, "accepted": accepted, "history": [record]}
+    return {"best": new_best, "accepted": accepted, "history": [record]}
 
 
 def should_continue(state: EvolutionState) -> str:
     """남은 세대가 있으면 변이로 루프백, 아니면 종료."""
-    return "continue" if state["generation"] < MAX_GENERATIONS else "finish"
+    if state["generation"] < MAX_GENERATIONS:
+        return "continue"
+    return "finish"
 
 
 def report_node(state: EvolutionState) -> dict:
@@ -280,7 +312,7 @@ def report_node(state: EvolutionState) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# 6. 그래프 조립
+# 6. 그래프 구성
 #    START → mutate → evaluate → select ─(continue)→ mutate   (루프)
 #                                       └(finish)──→ report → END
 # ---------------------------------------------------------------------------
@@ -310,37 +342,59 @@ evolve = graph_builder.compile()
 # ---------------------------------------------------------------------------
 # 7. 실행
 # ---------------------------------------------------------------------------
-def main() -> None:
-    print("## 진화형 코딩 에이전트 실행: fib(n) 최적화 ##")
-
-    # 세대 0: 초기 프로그램을 평가해 출발점(best)으로 삼는다.
-    metrics, _ = evaluate_program(INITIAL_PROGRAM)
-    print(f"\n>>> 세대 0: 초기 프로그램  correctness={metrics['correctness']:.2f}, "
-          f"calls={metrics['calls']}, combined={metrics['combined']}")
-    print("    " + INITIAL_PROGRAM.strip().replace("\n", "\n    "))
-
-    result = evolve.invoke({
-        "generation": 0,
-        "best": {"code": INITIAL_PROGRAM, "metrics": metrics, "description": "초기 프로그램 (순진한 재귀)"},
-        "feedback": [],
-        "history": [],
-    })
-
+def print_history(initial_metrics: dict, history: list[dict]) -> None:
     print("\n\n" + "=" * 30 + " 진화 기록 " + "=" * 30)
-    print(f"세대 0 | 기준   | correctness {metrics['correctness']:.2f} | calls {metrics['calls']:>5} | "
-          f"combined {metrics['combined']:<5} | 초기 프로그램 (순진한 재귀)")
-    for r in result["history"]:
+    print(
+        f"세대 0 | 기준   | correctness {initial_metrics['correctness']:.2f} | "
+        f"calls {initial_metrics['calls']:>5} | "
+        f"combined {initial_metrics['combined']:<5} | {INITIAL_DESCRIPTION}"
+    )
+    for r in history:
         m = r["metrics"]
-        print(f"세대 {r['generation']} | {'채택 ✓' if r['accepted'] else '기각 ✗'} | correctness {m['correctness']:.2f} | "
-              f"calls {m['calls']:>5} | combined {m['combined']:<5} | {r['description']}")
+        if r["accepted"]:
+            status = "채택 ✓"
+        else:
+            status = "기각 ✗"
+        print(
+            f"세대 {r['generation']} | {status} | correctness {m['correctness']:.2f} | "
+            f"calls {m['calls']:>5} | combined {m['combined']:<5} | {r['description']}"
+        )
 
-    best = result["best_program"]
+
+def print_best_program(best: Program) -> None:
     print("\n" + "=" * 30 + " 최고 프로그램 " + "=" * 30)
     print(f"({best['description']})\n")
     print(best["code"].strip())
     print("\nBest program metrics:")
     for name, value in best["metrics"].items():
         print(f"  {name}: {value}")
+
+
+def main() -> None:
+    print("## 진화형 코딩 에이전트 실행: fib(n) 최적화 ##")
+
+    # 세대 0: 초기 프로그램을 평가해 출발점(best)으로 삼는다.
+    metrics, _ = evaluate_program(INITIAL_PROGRAM)
+    print(
+        f"\n>>> 세대 0: 초기 프로그램  correctness={metrics['correctness']:.2f}, "
+        f"calls={metrics['calls']}, combined={metrics['combined']}"
+    )
+    print("    " + INITIAL_PROGRAM.strip().replace("\n", "\n    "))
+
+    initial_program: Program = {
+        "code": INITIAL_PROGRAM,
+        "metrics": metrics,
+        "description": INITIAL_DESCRIPTION,
+    }
+    result = evolve.invoke({
+        "generation": 0,
+        "best": initial_program,
+        "feedback": [],
+        "history": [],
+    })
+
+    print_history(metrics, result["history"])
+    print_best_program(result["best_program"])
 
 
 if __name__ == "__main__":

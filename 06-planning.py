@@ -30,7 +30,39 @@ from langgraph.graph import StateGraph, START, END
 
 
 # ---------------------------------------------------------------------------
-# 1. Fake 모델 정의
+# 1. 설정 · 상수
+# ---------------------------------------------------------------------------
+# 입력 주제
+TOPIC = "AI에서 강화학습의 중요성"
+
+# 노드별 역할(시스템 프롬프트)
+PLANNER_ROLE = (
+    "당신은 기술 문서 작성 전문가이자 콘텐츠 전략가입니다. "
+    "글을 쓰기 전에 명확하고 실행 가능한 계획을 먼저 세우는 것이 강점입니다."
+)
+
+EXECUTOR_ROLE = "당신은 기술 문서 작성 전문가입니다. 주어진 항목에 대해 2~3문장으로 간결하게 작성하세요."
+
+SYNTHESIZER_ROLE = (
+    "당신은 기술 문서 작성 전문가입니다. 아래 섹션들을 바탕으로 "
+    "약 200자 내외의 읽기 쉬운 최종 요약문을 작성하세요."
+)
+
+
+# ---------------------------------------------------------------------------
+# 2. 상태(State) 정의
+#    모든 노드가 이 딕셔너리를 읽고, 변경할 키만 반환하면 LangGraph가 병합해 준다.
+# ---------------------------------------------------------------------------
+class PlanExecuteState(TypedDict):
+    topic: str              # 사용자가 준 주제
+    plan: list[str]         # Planner가 만든 단계 목록
+    current_step: int       # 지금 실행할 단계의 인덱스
+    step_results: list[str] # 단계별 실행 결과 (누적)
+    final_summary: str      # Synthesizer가 만든 최종 요약
+
+
+# ---------------------------------------------------------------------------
+# 3. Fake 모델 정의
 #    그래프가 LLM을 호출하는 순서(계획 1회 → 단계 실행 3회 → 종합 1회)에 맞춰 응답을 배치한다.
 # ---------------------------------------------------------------------------
 llm = FakeListChatModel(responses=[
@@ -61,33 +93,29 @@ AI가 스스로 전략을 익히게 하는 가장 유력한 접근법으로, 그
 
 
 # ---------------------------------------------------------------------------
-# 2. 그래프 상태 정의
-#    모든 노드가 이 딕셔너리를 읽고, 변경할 키만 반환하면 LangGraph가 병합해 준다.
-# ---------------------------------------------------------------------------
-class PlanExecuteState(TypedDict):
-    topic: str              # 사용자가 준 주제
-    plan: list[str]         # Planner가 만든 단계 목록
-    current_step: int       # 지금 실행할 단계의 인덱스
-    step_results: list[str] # 단계별 실행 결과 (누적)
-    final_summary: str      # Synthesizer가 만든 최종 요약
-
-
-# ---------------------------------------------------------------------------
-# 3. 노드 정의 (각 노드는 state를 받아 "변경할 키"만 담은 dict를 반환한다)
+# 4. 노드 정의
+#    각 노드는 state를 받아 "변경할 키"만 담은 dict를 반환한다.
 # ---------------------------------------------------------------------------
 def planner_node(state: PlanExecuteState) -> dict:
     """[Planner] 주제를 보고 작성할 항목(단계)을 글머리 기호 목록으로 계획한다."""
     print("\n>>> [Planner] 계획 수립 중...")
 
+    request = (
+        f"주제 '{state['topic']}'에 대한 요약문을 작성하려고 합니다.\n"
+        f"다뤄야 할 핵심 항목을 3개의 글머리 기호(- )로 나열하세요. 항목만 출력하세요."
+    )
+
     response = llm.invoke([
-        SystemMessage(content="당신은 기술 문서 작성 전문가이자 콘텐츠 전략가입니다. "
-                              "글을 쓰기 전에 명확하고 실행 가능한 계획을 먼저 세우는 것이 강점입니다."),
-        HumanMessage(content=f"주제 '{state['topic']}'에 대한 요약문을 작성하려고 합니다.\n"
-                             f"다뤄야 할 핵심 항목을 3개의 글머리 기호(- )로 나열하세요. 항목만 출력하세요."),
+        SystemMessage(content=PLANNER_ROLE),
+        HumanMessage(content=request),
     ])
 
     # "- 항목" 형식의 줄만 골라 계획 리스트로 변환한다.
-    plan = [line.lstrip("- ").strip() for line in response.content.splitlines() if line.strip().startswith("-")]
+    plan = [
+        line.lstrip("- ").strip()
+        for line in response.content.splitlines()
+        if line.strip().startswith("-")
+    ]
 
     print("--- 수립된 계획 ---")
     for i, step in enumerate(plan, 1):
@@ -103,7 +131,7 @@ def executor_node(state: PlanExecuteState) -> dict:
     print(f"\n>>> [Executor] {step_index + 1}/{len(state['plan'])} 단계 실행: '{step}'")
 
     response = llm.invoke([
-        SystemMessage(content="당신은 기술 문서 작성 전문가입니다. 주어진 항목에 대해 2~3문장으로 간결하게 작성하세요."),
+        SystemMessage(content=EXECUTOR_ROLE),
         HumanMessage(content=f"주제: {state['topic']}\n작성할 항목: {step}"),
     ])
 
@@ -122,31 +150,30 @@ def synthesizer_node(state: PlanExecuteState) -> dict:
 
     # 계획 항목과 실행 결과를 짝지어 LLM에 전달한다.
     sections = "\n\n".join(
-        f"### {step}\n{result}" for step, result in zip(state["plan"], state["step_results"])
+        f"### {step}\n{result}"
+        for step, result in zip(state["plan"], state["step_results"])
     )
 
     response = llm.invoke([
-        SystemMessage(content="당신은 기술 문서 작성 전문가입니다. 아래 섹션들을 바탕으로 "
-                              "약 200자 내외의 읽기 쉬운 최종 요약문을 작성하세요."),
+        SystemMessage(content=SYNTHESIZER_ROLE),
         HumanMessage(content=f"주제: {state['topic']}\n\n{sections}"),
     ])
 
     return {"final_summary": response.content}
 
 
-# ---------------------------------------------------------------------------
-# 4. 조건부 분기 함수
-#    executor 실행 후 "남은 단계가 있으면 executor로 되돌아가고, 없으면 synthesizer로" 진행한다.
-#    반환값은 add_conditional_edges에 등록한 매핑의 키와 일치해야 한다.
-# ---------------------------------------------------------------------------
 def should_continue(state: PlanExecuteState) -> str:
+    """[조건부 분기] executor 실행 후 "남은 단계가 있으면 executor로 되돌아가고, 없으면 synthesizer로" 진행한다.
+
+    반환값은 add_conditional_edges에 등록한 매핑의 키와 일치해야 한다.
+    """
     if state["current_step"] < len(state["plan"]):
         return "continue"   # 남은 단계 있음 → 루프
     return "finish"         # 모든 단계 완료 → 종합
 
 
 # ---------------------------------------------------------------------------
-# 5. 그래프 조립
+# 5. 그래프 구성
 #    START → planner → executor ⇄ (조건부) → synthesizer → END
 # ---------------------------------------------------------------------------
 graph_builder = StateGraph(PlanExecuteState)
@@ -175,11 +202,10 @@ planning_agent = graph_builder.compile()
 # 6. 실행
 # ---------------------------------------------------------------------------
 def main() -> None:
-    topic = "AI에서 강화학습의 중요성"
-    print(f"## 계획 수립 및 작성 작업 실행: '{topic}' ##")
+    print(f"## 계획 수립 및 작성 작업 실행: '{TOPIC}' ##")
 
     # 초기 상태에는 topic만 주면 된다. 나머지 키는 노드들이 채운다.
-    result = planning_agent.invoke({"topic": topic})
+    result = planning_agent.invoke({"topic": TOPIC})
 
     print("\n\n" + "=" * 30 + " 최종 결과 " + "=" * 30)
     print("\n### 계획")

@@ -50,10 +50,11 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 
 # ---------------------------------------------------------------------------
-# 1. 목표 설정 (Goal Setting)
+# 1. 설정 · 상수 (목표 설정, Goal Setting)
 #    요구사항(use case) + 측정 가능한 목표 목록 + 예산(최대 반복 횟수)을 명시한다.
 #    목표는 점검자가 "달성/미달성"으로 판정할 수 있을 만큼 구체적이어야 한다.
 # ---------------------------------------------------------------------------
+# 요구사항과 목표
 USE_CASE = "주어진 양의 정수의 Binary Gap(이진 표현에서 1로 둘러싸인 연속된 0의 최대 길이)을 구하는 코드를 작성한다."
 
 GOALS = [
@@ -64,12 +65,41 @@ GOALS = [
     "몇 가지 예시로 결과를 출력",
 ]
 
+# 예산과 결과물
 MAX_ITERATIONS = 5                                                   # 예산(제약): 이 횟수 안에 끝내야 한다
 OUTPUT_FILE = Path(__file__).parent / "output" / "binary_gap.py"     # 최종 결과물 저장 위치
+RUN_TIMEOUT_SECONDS = 10                                             # 저장한 코드 실행 확인 시 타임아웃
+
+# LLM 역할 지시문
+GENERATOR_ROLE = (
+    "당신은 파이썬 코딩 에이전트입니다. 주어진 요구사항을 구현하는 파이썬 코드를 작성하세요. "
+    "아래 목표 목록을 모두 만족해야 합니다. 이전 코드와 피드백이 주어지면 그것을 반영해 수정하세요. "
+    "설명 없이 ```python 코드 블록 하나만 출력하세요."
+)
+
+MONITOR_ROLE = (
+    "당신은 코드 검토자입니다. 주어진 코드를 목표 목록과 하나씩 대조해 판정하세요. "
+    "목표마다 한 줄씩, 반드시 '번호 | 달성 또는 미달성 | 사유' 형식으로만 답하세요. "
+    "미달성이면 무엇을 고쳐야 하는지 사유에 구체적으로 쓰세요."
+)
+
+# LLM 응답에서 ```python ... ``` 펜스 안의 코드를 꺼내는 정규식
+CODE_BLOCK = re.compile(r"```(?:python)?\n(.*?)```", re.DOTALL)
 
 
 # ---------------------------------------------------------------------------
-# 2. Fake 모델 정의
+# 2. 목표 점검 결과의 구조
+#    점검 모델의 응답을 "목표별 상태"로 파싱해 두면 진척도 계산, 후퇴 감지, 피드백 생성에 모두 쓸 수 있다.
+# ---------------------------------------------------------------------------
+class GoalStatus(TypedDict):
+    index: int      # 목표 번호 (1부터)
+    goal: str       # 목표 문장
+    met: bool       # 달성 여부
+    reason: str     # 판정 사유 (미달성이면 수정 힌트가 된다)
+
+
+# ---------------------------------------------------------------------------
+# 3. Fake 모델 정의
 #    생성 모델(코드 작성)과 점검 모델(목표 점검)을 분리해, 루프가 호출하는 순서대로 응답을 배치한다.
 # ---------------------------------------------------------------------------
 generator_llm = FakeListChatModel(responses=[
@@ -141,32 +171,12 @@ monitor_llm = FakeListChatModel(responses=[
 5 | 달성 | 7개의 예시를 이진 표현과 함께 출력한다.""",
 ])
 
-GENERATOR_ROLE = (
-    "당신은 파이썬 코딩 에이전트입니다. 주어진 요구사항을 구현하는 파이썬 코드를 작성하세요. "
-    "아래 목표 목록을 모두 만족해야 합니다. 이전 코드와 피드백이 주어지면 그것을 반영해 수정하세요. "
-    "설명 없이 ```python 코드 블록 하나만 출력하세요."
-)
 
-MONITOR_ROLE = (
-    "당신은 코드 검토자입니다. 주어진 코드를 목표 목록과 하나씩 대조해 판정하세요. "
-    "목표마다 한 줄씩, 반드시 '번호 | 달성 또는 미달성 | 사유' 형식으로만 답하세요. "
-    "미달성이면 무엇을 고쳐야 하는지 사유에 구체적으로 쓰세요."
-)
-
-
+# ---------------------------------------------------------------------------
+# 4. 헬퍼 함수
+# ---------------------------------------------------------------------------
 def format_goals(goals: list[str]) -> str:
     return "\n".join(f"{i}. {g}" for i, g in enumerate(goals, start=1))
-
-
-# ---------------------------------------------------------------------------
-# 3. 목표 점검 결과의 구조
-#    점검 모델의 응답을 "목표별 상태"로 파싱해 두면 진척도 계산, 후퇴 감지, 피드백 생성에 모두 쓸 수 있다.
-# ---------------------------------------------------------------------------
-class GoalStatus(TypedDict):
-    index: int      # 목표 번호 (1부터)
-    goal: str       # 목표 문장
-    met: bool       # 달성 여부
-    reason: str     # 판정 사유 (미달성이면 수정 힌트가 된다)
 
 
 def parse_goal_report(report: str, goals: list[str]) -> list[GoalStatus]:
@@ -182,6 +192,7 @@ def parse_goal_report(report: str, goals: list[str]) -> list[GoalStatus]:
                 "met": parts[1] == "달성",
                 "reason": parts[2],
             }
+
     # 점검 응답에서 빠진 목표는 보수적으로 "미달성"으로 간주한다.
     return [
         statuses.get(i, {"index": i, "goal": g, "met": False, "reason": "점검 결과 없음"})
@@ -191,14 +202,21 @@ def parse_goal_report(report: str, goals: list[str]) -> list[GoalStatus]:
 
 def clean_code_block(text: str) -> str:
     """LLM 응답에서 ```python ... ``` 펜스를 벗겨 순수 코드만 돌려준다."""
-    match = re.search(r"```(?:python)?\n(.*?)```", text, re.DOTALL)
-    return (match.group(1) if match else text).strip()
+    match = CODE_BLOCK.search(text)
+    if match:
+        return match.group(1).strip()
+    return text.strip()
 
 
 # ---------------------------------------------------------------------------
-# 4. 루프의 각 단계
+# 5. 루프의 각 단계
 # ---------------------------------------------------------------------------
-def generate_code(use_case: str, goals: list[str], previous_code: str, feedback: str) -> str:
+def generate_code(
+    use_case: str,
+    goals: list[str],
+    previous_code: str,
+    feedback: str,
+) -> str:
     """[G1 코드 생성] 요구사항 + 목표 (+ 이전 코드 + 피드백) 를 LLM에 주고 코드를 받는다."""
     request = f"[요구사항]\n{use_case}\n\n[목표]\n{format_goals(goals)}"
     if previous_code:
@@ -206,14 +224,21 @@ def generate_code(use_case: str, goals: list[str], previous_code: str, feedback:
     if feedback:
         request += f"\n\n[이전 코드에 대한 피드백 — 미달성 목표]\n{feedback}"
 
-    response = generator_llm.invoke([SystemMessage(content=GENERATOR_ROLE), HumanMessage(content=request)])
+    response = generator_llm.invoke([
+        SystemMessage(content=GENERATOR_ROLE),
+        HumanMessage(content=request),
+    ])
     return clean_code_block(response.content)
 
 
 def check_goals(code: str, goals: list[str]) -> list[GoalStatus]:
     """[G2 목표 점검] 코드를 목표 목록과 대조해 목표별 달성 여부를 받는다."""
     request = f"[목표]\n{format_goals(goals)}\n\n[코드]\n```python\n{code}\n```"
-    response = monitor_llm.invoke([SystemMessage(content=MONITOR_ROLE), HumanMessage(content=request)])
+
+    response = monitor_llm.invoke([
+        SystemMessage(content=MONITOR_ROLE),
+        HumanMessage(content=request),
+    ])
     return parse_goal_report(response.content, goals)
 
 
@@ -236,25 +261,36 @@ def report_progress(statuses: list[GoalStatus], previous: list[GoalStatus] | Non
 
 def build_feedback(statuses: list[GoalStatus]) -> str:
     """미달성 목표와 사유만 모아 다음 생성에 전달할 피드백을 만든다."""
-    return "\n".join(f"- 목표 {s['index']} ({s['goal']}): {s['reason']}" for s in statuses if not s["met"])
+    lines = [
+        f"- 목표 {s['index']} ({s['goal']}): {s['reason']}"
+        for s in statuses
+        if not s["met"]
+    ]
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
-# 5. 목표 달성 루프 (Goal Loop)
+# 6. 목표 달성 루프 (Goal Loop)
 #    G1 생성 → G2 점검 → G3 판정 을 반복한다. 종료 조건은 "모두 달성" 또는 "최대 반복 도달" 두 가지뿐이다.
 # ---------------------------------------------------------------------------
-def run_goal_agent(use_case: str, goals: list[str], max_iterations: int) -> tuple[str, list[GoalStatus]]:
-    code, feedback = "", ""
+def run_goal_agent(
+    use_case: str,
+    goals: list[str],
+    max_iterations: int,
+) -> tuple[str, list[GoalStatus]]:
+    code = ""
+    feedback = ""
     statuses: list[GoalStatus] = []
 
     for iteration in range(1, max_iterations + 1):
-        print(f"\n>>> 반복 {iteration}/{max_iterations}: [G1] 코드 생성 중..."
-              + (" (이전 피드백 반영)" if feedback else ""))
+        feedback_note = " (이전 피드백 반영)" if feedback else ""
+        print(f"\n>>> 반복 {iteration}/{max_iterations}: [G1] 코드 생성 중...{feedback_note}")
         code = generate_code(use_case, goals, code, feedback)
         print("    " + code.replace("\n", "\n    "))
 
         print("\n[G2] 목표 점검 중...")
-        previous, statuses = statuses, check_goals(code, goals)
+        previous = statuses
+        statuses = check_goals(code, goals)
         report_progress(statuses, previous or None)
 
         unmet = [s for s in statuses if not s["met"]]
@@ -265,6 +301,7 @@ def run_goal_agent(use_case: str, goals: list[str], max_iterations: int) -> tupl
         if remaining == 0:
             print(f"[G3] 판정: 최대 반복 도달 → 미달성 목표 {len(unmet)}개를 남기고 종료")
             break
+
         print(f"[G3] 판정: 미달성 {len(unmet)}개, 남은 반복 {remaining}회 → 피드백을 반영해 재시도")
         feedback = build_feedback(statuses)
 
@@ -272,18 +309,25 @@ def run_goal_agent(use_case: str, goals: list[str], max_iterations: int) -> tupl
 
 
 # ---------------------------------------------------------------------------
-# 6. 최종 결과물 저장 + 실행 확인
+# 7. 최종 결과물 저장
 # ---------------------------------------------------------------------------
-def save_code(code: str, use_case: str, statuses: list[GoalStatus], path: Path) -> None:
+def save_code(
+    code: str,
+    use_case: str,
+    statuses: list[GoalStatus],
+    path: Path,
+) -> None:
     """최종 코드 앞에 요구사항과 목표 달성 현황을 주석으로 붙여 저장한다."""
     header = [f"# 요구사항: {use_case}", "# 목표 달성 현황:"]
     header += [f"#   [{'v' if s['met'] else ' '}] {s['goal']}" for s in statuses]
+
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(header) + "\n\n" + code + "\n", encoding="utf-8")
 
 
 # ---------------------------------------------------------------------------
-# 7. 실행
+# 8. 실행
+#    목표 출력 → 목표 달성 루프 → 최종 코드 저장 → 저장한 코드 실행 확인
 # ---------------------------------------------------------------------------
 def main() -> None:
     print("## 목표 설정·모니터링 코딩 에이전트 실행 ##")
@@ -298,8 +342,14 @@ def main() -> None:
     save_code(code, USE_CASE, statuses, OUTPUT_FILE)
 
     print("[M2] 저장한 코드 실행 확인:")
-    result = subprocess.run([sys.executable, str(OUTPUT_FILE)], capture_output=True, text=True, timeout=10)
-    print("    " + (result.stdout or result.stderr).rstrip().replace("\n", "\n    "))
+    result = subprocess.run(
+        [sys.executable, str(OUTPUT_FILE)],
+        capture_output=True,
+        text=True,
+        timeout=RUN_TIMEOUT_SECONDS,
+    )
+    output = result.stdout or result.stderr
+    print("    " + output.rstrip().replace("\n", "\n    "))
 
 
 if __name__ == "__main__":
